@@ -47,7 +47,7 @@ namespace glm
 
 		if(det > std::numeric_limits<T>::epsilon())
 		{
-			// calculate distance from vert0 to ray origin
+			// calculate distance from vert0 to ray m_Origin
 			vec<3, T, Q> const dist = orig - vert0;
 
 			// calculate U parameter and test bounds
@@ -65,7 +65,7 @@ namespace glm
 		}
 		else if(det < -std::numeric_limits<T>::epsilon())
 		{
-			// calculate distance from vert0 to ray origin
+			// calculate distance from vert0 to ray m_Origin
 			vec<3, T, Q> const dist = orig - vert0;
 
 			// calculate U parameter and test bounds

@@ -125,7 +125,7 @@ namespace glm
 		vec<3, T, Q> rotationAxis;
 
 		if(cosTheta >= static_cast<T>(1) - epsilon<T>()) {
-			// orig and dest point in the same direction
+			// orig and dest point in the same m_Direction
 			return quat_identity<T,Q>();
 		}
 

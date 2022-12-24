@@ -166,21 +166,21 @@ namespace glm
 
 
 	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAt(vec<3, T, Q> const& direction, vec<3, T, Q> const& up)
+	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAt(vec<3, T, Q> const& m_Direction, vec<3, T, Q> const& up)
 	{
 #		if GLM_CONFIG_CLIP_CONTROL & GLM_CLIP_CONTROL_LH_BIT
 			return quatLookAtLH(direction, up);
 #		else
-			return quatLookAtRH(direction, up);
+			return quatLookAtRH(m_Direction, up);
 # 		endif
 	}
 
 	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAtRH(vec<3, T, Q> const& direction, vec<3, T, Q> const& up)
+	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAtRH(vec<3, T, Q> const& m_Direction, vec<3, T, Q> const& up)
 	{
 		mat<3, 3, T, Q> Result;
 
-		Result[2] = -direction;
+		Result[2] = -m_Direction;
 		vec<3, T, Q> const& Right = cross(up, Result[2]);
 		Result[0] = Right * inversesqrt(max(static_cast<T>(0.00001), dot(Right, Right)));
 		Result[1] = cross(Result[2], Result[0]);
@@ -189,11 +189,11 @@ namespace glm
 	}
 
 	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAtLH(vec<3, T, Q> const& direction, vec<3, T, Q> const& up)
+	GLM_FUNC_QUALIFIER qua<T, Q> quatLookAtLH(vec<3, T, Q> const& m_Direction, vec<3, T, Q> const& up)
 	{
 		mat<3, 3, T, Q> Result;
 
-		Result[2] = direction;
+		Result[2] = m_Direction;
 		vec<3, T, Q> const& Right = cross(up, Result[2]);
 		Result[0] = Right * inversesqrt(max(static_cast<T>(0.00001), dot(Right, Right)));
 		Result[1] = cross(Result[2], Result[0]);

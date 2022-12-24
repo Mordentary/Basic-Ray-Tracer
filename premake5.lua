@@ -16,6 +16,8 @@ workspace "BasicRayTracer"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["glm"] = "BasicRayTracer/vendor/glm"
+IncludeDir["stb_image"] = "BasicRayTracer/vendor/stb_image"
+
 
 
 project "BasicRayTracer"
@@ -34,7 +36,10 @@ project "BasicRayTracer"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
+
 	}
 	
 	defines
@@ -45,7 +50,8 @@ project "BasicRayTracer"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 

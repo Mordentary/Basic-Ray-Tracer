@@ -33,7 +33,7 @@
 /// 
 /// glm::sortEigenvalues(evals, evecs);
 /// 
-/// // ... now evecs[0] points in the direction (symmetric) of the largest spatial distribuion within ptData
+/// // ... now evecs[0] points in the m_Direction (symmetric) of the largest spatial distribuion within ptData
 /// ```
 
 #pragma once

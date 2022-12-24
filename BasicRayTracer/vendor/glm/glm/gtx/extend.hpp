@@ -28,7 +28,7 @@ namespace glm
 	/// @addtogroup gtx_extend
 	/// @{
 
-	/// Extends of Length the Origin position using the (Source - Origin) direction.
+	/// Extends of Length the Origin position using the (Source - Origin) m_Direction.
 	/// @see gtx_extend
 	template<typename genType>
 	GLM_FUNC_DECL genType extend(

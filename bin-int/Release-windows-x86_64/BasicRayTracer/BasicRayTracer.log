@@ -1,0 +1,3 @@
+﻿  main.cpp
+E:\Development\BasicRayTracer\BasicRayTracer\src\main.cpp(13,42): warning C4305: 'initializing': truncation from 'double' to 'float'
+  BasicRayTracer.vcxproj -> E:\Development\BasicRayTracer\bin\Release-windows-x86_64\BasicRayTracer\BasicRayTracer.exe

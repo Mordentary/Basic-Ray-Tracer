@@ -152,8 +152,8 @@ namespace glm
 	GLM_FUNC_DECL genType mirrorRepeat(genType const& Texcoord);
 
 	/// Returns a value equal to the nearest integer to x.
-	/// The fraction 0.5 will round in a direction chosen by the
-	/// implementation, presumably the direction that is fastest.
+	/// The fraction 0.5 will round in a m_Direction chosen by the
+	/// implementation, presumably the m_Direction that is fastest.
 	///
 	/// @param x The values of the argument must be greater or equal to zero.
 	/// @tparam genType floating point scalar types.
@@ -164,8 +164,8 @@ namespace glm
 	GLM_FUNC_DECL int iround(genType const& x);
 
 	/// Returns a value equal to the nearest integer to x.
-	/// The fraction 0.5 will round in a direction chosen by the
-	/// implementation, presumably the direction that is fastest.
+	/// The fraction 0.5 will round in a m_Direction chosen by the
+	/// implementation, presumably the m_Direction that is fastest.
 	///
 	/// @param x The values of the argument must be greater or equal to zero.
 	/// @tparam genType floating point scalar types.
