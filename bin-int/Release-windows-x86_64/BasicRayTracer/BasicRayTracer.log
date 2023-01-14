@@ -1,3 +1,5 @@
 ﻿  main.cpp
-E:\Development\BasicRayTracer\BasicRayTracer\src\main.cpp(13,42): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\Development\BasicRayTracer\BasicRayTracer\src\main.cpp(11,42): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\Development\BasicRayTracer\BasicRayTracer\src\main.cpp(38,51): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+E:\Development\BasicRayTracer\BasicRayTracer\src\main.cpp(53,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   BasicRayTracer.vcxproj -> E:\Development\BasicRayTracer\bin\Release-windows-x86_64\BasicRayTracer\BasicRayTracer.exe

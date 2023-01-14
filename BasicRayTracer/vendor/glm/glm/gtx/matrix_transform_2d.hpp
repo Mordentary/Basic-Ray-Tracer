@@ -57,7 +57,7 @@ namespace glm
 		mat<3, 3, T, Q> const& m,
 		vec<2, T, Q> const& v);
 
-	/// Builds an horizontal (parallel to the x axis) shear 3 * 3 matrix.
+	/// Builds an VP_Horizontal (parallel to the x axis) shear 3 * 3 matrix.
 	///
 	/// @param m Input matrix multiplied by this translation matrix.
 	/// @param y Shear factor.
@@ -66,7 +66,7 @@ namespace glm
 		mat<3, 3, T, Q> const& m,
 		T y);
 
-	/// Builds a vertical (parallel to the y axis) shear 3 * 3 matrix.
+	/// Builds a VP_Vertical (parallel to the y axis) shear 3 * 3 matrix.
 	///
 	/// @param m Input matrix multiplied by this translation matrix.
 	/// @param x Shear factor.

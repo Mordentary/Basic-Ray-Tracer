@@ -8,10 +8,8 @@
 namespace BRT
 {
 
-
-
     const float ASPECT_RATIO = 16.0 / 9.0;
-    const int WIDTH = 400;
+    const int WIDTH = 1280;
     const int HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
 
     // Camera
@@ -20,16 +18,39 @@ namespace BRT
     float viewport_width = ASPECT_RATIO * viewport_height;
     float focal_length = 1.0;
 
-    glm::vec3 CameraOrigin{ 0, 0, 0 };
-    glm::vec3 horizontal {viewport_width, 0, 0};
-    glm::vec3 vertical      { 0, viewport_height, 0 };
+    glm::vec3 CameraOrigin  { 0, 0, 0 };
+    glm::vec3 VP_Horizontal {viewport_width, 0, 0};
+    glm::vec3 VP_Vertical   { 0, viewport_height, 0 };
 
-    glm::vec3 lower_left_corner = CameraOrigin - horizontal / 2.f - vertical / 2.f - glm::vec3(0, 0, focal_length);
+    glm::vec3 ViewportBottomLeftCorner = CameraOrigin - VP_Horizontal / 2.f - VP_Vertical / 2.f - glm::vec3(0, 0, focal_length);
+
+    float RayVsSphere(const glm::vec3& center, double radius, const Ray& ray) 
+    {
+        glm::vec3 oc = ray.GetOrigin() -    center;
+        auto a = std::pow(glm::length(ray.GetDirection()),2);
+        auto half_b = glm::dot(oc, ray.GetDirection());
+        auto c = std::pow(glm::length(oc), 2) - radius * radius;
+        auto discriminant = half_b * half_b - a * c;
+        if (discriminant < 0) {
+            return -1.0;
+        }
+        else {
+            return (-half_b - sqrt(discriminant)) / a;
+        }
+    }
 
     glm::vec3 RayColor(const Ray& ray)
     {
-        glm::vec3 unit_direction =  glm::normalize(ray.GetDirection());
-        auto t = 0.5 * (unit_direction.y + 1.0);
+        glm::vec3 sphereCenter = glm::vec3(0, 0, -1);
+        float t = RayVsSphere(sphereCenter, 0.5, ray);
+        if (t > 0.0f) 
+        {
+            glm::vec3 N = glm::normalize(ray.PointAtDistance(t) - sphereCenter);
+            return 0.5f * glm::vec3(N.x + 1, N.y + 1, N.z + 1);
+        }
+
+        glm::vec3 UnitDir = glm::normalize(ray.GetDirection());
+        t = 0.5 * (UnitDir.y + 1.0);
         return glm::mix(glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.5, 0.7, 1.0), t);
     }
 
@@ -54,10 +75,13 @@ int main()
     // Generate the gradient
      for (int i = 0; i < BRT::HEIGHT * BRT::WIDTH * 3; i += 3)
      {
-         int x = i % (BRT::WIDTH * 3) / 3;
-         int y = i / (BRT::WIDTH * 3);
+         int x = (i % (BRT::WIDTH * 3) / 3);
+         int y = (i / (BRT::WIDTH * 3));
 
-         BRT::Ray ray(BRT::CameraOrigin, BRT::lower_left_corner + (float)x * BRT::horizontal + (float)y * BRT::vertical - BRT::CameraOrigin);
+         float u = float(x) / (BRT::WIDTH - 1);
+         float v = float(y) / (BRT::HEIGHT - 1);
+
+         BRT::Ray ray(BRT::CameraOrigin, BRT::ViewportBottomLeftCorner + ((float)u * BRT::VP_Horizontal + (float)v * BRT::VP_Vertical) - BRT::CameraOrigin);
          glm::vec3 pixelColor = BRT::RayColor(ray);
          BRT::WriteColor(data, i, pixelColor);
      }
