@@ -27,7 +27,7 @@ namespace glm
 			else if(q.w < static_cast<T>(0))
 				return qua<T, Q>(log(-q.w), pi<T>(), static_cast<T>(0), static_cast<T>(0));
 			else
-				return qua<T, Q>(std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity());
+				return qua<T, Q>(std::numeric_limits<T>::s_Infinity(), std::numeric_limits<T>::s_Infinity(), std::numeric_limits<T>::s_Infinity(), std::numeric_limits<T>::s_Infinity());
 		}
 		else
 		{

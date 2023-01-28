@@ -2,6 +2,7 @@
 #include"Core.h"
 #include"Hittable.h"
 #include <vector>
+
 namespace BRT 
 {
 	class HittableList : Hittable

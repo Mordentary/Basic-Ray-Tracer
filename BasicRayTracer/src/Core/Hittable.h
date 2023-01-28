@@ -1,6 +1,7 @@
 #pragma once
 #include "Ray.h"
-
+#include "Material.h"
+#include "Core/Core.h"
 
 namespace BRT
 {
@@ -8,6 +9,7 @@ namespace BRT
 	struct HitInfo {
 		glm::vec3 Point;
 		glm::vec3 Normal;
+		Shared<Material> Material;
 		double IntersectionTime;
 		bool IsNormalOutward;
 

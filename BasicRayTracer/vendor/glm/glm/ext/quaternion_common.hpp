@@ -118,10 +118,10 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_DECL vec<4, bool, Q> isnan(qua<T, Q> const& x);
 
-	/// Returns true if x holds a positive infinity or negative
-	/// infinity representation in the underlying implementation's
+	/// Returns true if x holds a positive s_Infinity or negative
+	/// s_Infinity representation in the underlying implementation's
 	/// set of floating point representations. Returns false
-	/// otherwise, including for implementations with no infinity
+	/// otherwise, including for implementations with no s_Infinity
 	/// representations.
 	///
 	/// @tparam T A floating-point scalar type

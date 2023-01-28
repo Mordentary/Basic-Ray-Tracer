@@ -383,10 +383,10 @@ namespace glm
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_DECL vec<L, bool, Q> isnan(vec<L, T, Q> const& x);
 
-	/// Returns true if x holds a positive infinity or negative
-	/// infinity representation in the underlying implementation's
+	/// Returns true if x holds a positive s_Infinity or negative
+	/// s_Infinity representation in the underlying implementation's
 	/// set of floating point representations. Returns false
-	/// otherwise, including for implementations with no infinity
+	/// otherwise, including for implementations with no s_Infinity
 	/// representations.
 	///
 	/// @tparam L Integer between 1 and 4 included that qualify the dimension of the vector
@@ -503,7 +503,7 @@ namespace glm
 	/// exponent is returned in the parameter exp. For a
 	/// floating-point value of zero, the significant and exponent
 	/// are both zero. For a floating-point value that is an
-	/// infinity or is not a number, the results are undefined.
+	/// s_Infinity or is not a number, the results are undefined.
 	///
 	/// @tparam genType Floating-point scalar or vector types.
 	///

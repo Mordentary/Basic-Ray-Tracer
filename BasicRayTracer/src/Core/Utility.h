@@ -1,39 +1,32 @@
 #pragma once
-#include<random>
-
+#include"Core.h"
 namespace BRT
 {
+    static class Utility
+    {
+    public:
+        //Constans
+        static const double s_Infinity;
 
-    //Constans
-    const double infinity = std::numeric_limits<double>::infinity();
+        //Functions
+        static double RandomDouble(double min, double max);
 
-    inline double RandomDouble(double min, double max) {
-        std::uniform_real_distribution<double> distribution(min, max);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
+        static double RandomDouble();
 
-    inline double RandomDouble() {
-        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
+        static glm::vec3 RandomVector();
 
+        static glm::vec3 RandomVector(double min, double max);
 
-    inline static glm::vec3 RandomVector() {
-        return { RandomDouble(), RandomDouble(), RandomDouble() };
-    }
+        static glm::vec3 RandomPointInUnitSphere();
 
-    inline static glm::vec3 RandomVector(double min, double max) {
-        return { RandomDouble(min, max), RandomDouble(min, max), RandomDouble(min, max) };
-    }
+        static glm::vec3 RandomPointInUnitDisk();
 
+        static glm::vec3 RandomPointInHemisphere(const glm::vec3& normal);
 
-    glm::vec3 random_in_unit_sphere() {
-        while (true) {
-            glm::vec3 point = RandomVector(-1, 1);
-            if (glm::length(point) >= 1) continue;
-            return point;
-        }
-    }
+        static glm::vec3 RandomUnitVector();
+
+        static glm::vec3 Refract(const glm::vec3& incidentRay, const glm::vec3& normal, float ior);
+
+      
+    };
 }

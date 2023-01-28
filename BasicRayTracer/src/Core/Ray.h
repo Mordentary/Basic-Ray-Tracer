@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "Core/Core.h"
 
 
 
@@ -8,6 +8,7 @@ namespace BRT
     class Ray
     {
     public:
+        Ray() = default;
         Ray(const glm::vec3& m_Origin, const glm::vec3& m_Direction)
             : m_Origin(m_Origin), m_Direction(m_Direction) {}
 

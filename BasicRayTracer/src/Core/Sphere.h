@@ -8,13 +8,14 @@ namespace BRT
 
     public:
         Sphere() = default;
-        Sphere(const glm::vec3& center, double rad) : m_Center(center), m_Radius(rad) {};
+        Sphere(const glm::vec3& center, double rad, const Shared<Material>& mat) : m_Center(center), m_Material(mat), m_Radius(rad) {};
 
         virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& info) const override;
 
 
     private:
         glm::vec3 m_Center;
+        Shared<Material> m_Material;
         double m_Radius;
 	};
 }

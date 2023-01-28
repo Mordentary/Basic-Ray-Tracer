@@ -1,23 +1,59 @@
 #include<iostream>
-#include"glm/glm.hpp"
 #include"stb_image_write.h"
-#include"Core/Ray.h"
-#include"Core/HittableList.h"
-#include"Core/Sphere.h"
 #include"Core/Utility.h"
+#include"Core/Sphere.h"
+#include"Core/HittableList.h"
 #include"Core/Camera.h"
+
+
+
+int* Pizdec()
+{
+    int* a = new int[10];
+
+
+    Shared<BRT::Sphere> SPH = CreateShared<BRT::Sphere>();
+
+
+
+    return a;
+}
 
 namespace BRT
 {
     
+    
+    int* kek = Pizdec();
+    int kek2 = 3;
+    int* kek3 = &kek2;
+    kek = kek3;
+
+
+
+
+
+
+
+    
+        
+
+
+
+
+
+
+
+
+
+
 
     // Screen
 
-    const float ASPECT_RATIO = 16.0 / 9.0;
+    const float ASPECT_RATIO = 16.0f / 9.0f;
     const int WIDTH = 1280;
     const int HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
-    const int SAMPLES_PER_PIXEL = 16;
-    const int MAX_DEPTH = 6;
+    const int SAMPLES_PER_PIXEL = 200;
+    const int MAX_DEPTH = 20;
 
 
     // Camera and Viewport
@@ -38,14 +74,23 @@ namespace BRT
     {
         if (rayDepth <= 0)
             return { 0, 0, 0 };
+
         HitInfo info;
-        if (world.Hit(ray, 0, infinity, info)) {
+        if (world.Hit(ray, 0.001, Utility::s_Infinity, info))
+        {
 
-            glm::vec3 target = info.Point + info.Normal + random_in_unit_sphere();
-            return 0.5f * RayColor(Ray{ info.Point, target - info.Point }, world, rayDepth - 1);
+            Ray scattered{};
+            glm::vec3 attenuation{};
+            if (info.Material->Scatter(ray, info, attenuation, scattered))
+            {
+                return attenuation * RayColor(scattered, world, rayDepth - 1);
+            }
 
-          //  return 0.5f * (info.Normal + glm::vec3(1, 1, 1));
+            //glm::vec3 target = info.Point  + RandomPointInHemisphere(info.Normal);
+            //return  0.5f * RayColor({ info.Point, target - info.Point }, world, rayDepth - 1);
+            //return 0.5f * (info.Normal + glm::vec3(1, 1, 1));
         }
+
         glm::vec3 unitDirection = glm::normalize(ray.GetDirection());
         float t = 0.5 * (unitDirection.y + 1.0);
         return float(1.0f - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
@@ -54,11 +99,15 @@ namespace BRT
     void WriteColor(unsigned char* data, uint32_t index, glm::vec3& color) 
     {
 
-        // Divide the color by the number of samples.
-        auto scale = 1.0 / SAMPLES_PER_PIXEL;
+        // Divide the color by the number of samples and gamma correction.
+        auto scale = (1.0 / SAMPLES_PER_PIXEL) ;
         color.r *= scale;
         color.g *= scale;
         color.b *= scale;
+
+        const glm::vec3 gamma(1.f / 2.2f);
+
+       color = glm::pow(color, gamma);
 
         data[index] = static_cast<char>(256 * glm::clamp(color.r, 0.0f, 0.999f));         // Red channel
         data[index + 1] = static_cast<char>(256 * glm::clamp(color.g, 0.0f, 0.999f));    // Green channel
@@ -66,15 +115,34 @@ namespace BRT
     }
 }
 
+BRT::HittableList RandomScene();
+
 int main()
 {
    
-    BRT::HittableList world;
-    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(0, 0, -1), 0.5));
-    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(0, -100.5, -1), 100));
+    BRT::HittableList world = RandomScene();
+    
+
+ /*   auto material_ground =  BRT::CreateShared<BRT::Matte>(glm::vec3(0.2, 0.2, 0.1));
+    auto material_center =  BRT::CreateShared<BRT::Dialectric>(1.5f);
+    auto material_left =    BRT::CreateShared<BRT::Metal>(glm::vec3(0.8, 0.8, 0.8), 0.7f);
+    auto material_right =   BRT::CreateShared<BRT::Matte>(glm::vec3(0.8, 0.9, 0.2));
+
+    world.AddObject (BRT::CreateShared<BRT::Sphere>(glm::vec3(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.AddObject (BRT::CreateShared<BRT::Sphere>(glm::vec3(0.0, 0.0, -1.0), 0.3, material_center));
+    world.AddObject (BRT::CreateShared<BRT::Sphere>(glm::vec3(-1.0, 0.0, -1.0), -0.45, material_left));
+    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(-1.0, 0.0, -1.0), 0.5, material_left));
+    world.AddObject (BRT::CreateShared<BRT::Sphere>(glm::vec3(1.0, 0.0, -1.0), 0.5, material_right));*/
+
+  
+
+    glm::vec3 position(13, 2, 3);
+    glm::vec3 target(0, 0, 0);
+    glm::vec3 worldY(0, 1, 0);
+    float aperture = 0.1f;
 
 
-    BRT::Camera camera;
+    BRT::Camera camera{ BRT::ASPECT_RATIO, 20.0, 2.f, position, target, worldY, aperture, glm::length(position - target)};
     // Render
     std::cout << "Resolution:" << BRT::WIDTH << " X " << BRT::HEIGHT << "\n";
 
@@ -90,16 +158,18 @@ int main()
          glm::vec3 pixelColor(0, 0, 0);
          for (int s = 0; s < BRT::SAMPLES_PER_PIXEL; ++s) 
          {
-             auto u = (x + BRT::RandomDouble()) / (BRT::WIDTH  - 1);
-             auto v = (y + BRT::RandomDouble()) / (BRT::HEIGHT - 1);
+             auto u = (x + BRT::Utility::RandomDouble()) / (BRT::WIDTH - 1);
+             auto v = (y + BRT::Utility::RandomDouble()) / (BRT::HEIGHT - 1);
+
              BRT::Ray ray = camera.GetRay(u, v);
              pixelColor += BRT::RayColor(ray, world, BRT::MAX_DEPTH);
          }
+
          BRT::WriteColor(data, i, pixelColor);
 
-         int percentage = 100 * i / (BRT::HEIGHT * BRT::WIDTH * 3);
+         //int percentage = 100 * i / (BRT::HEIGHT * BRT::WIDTH * 3);
 
-         std::cerr << "\rLoading: " << percentage << "%" << std::flush;
+         //std::cerr << "\rLoading: " << percentage << "%" << std::flush;
      }
 
      std::cerr << "\nRendering complete!\n";
@@ -115,4 +185,54 @@ int main()
     delete[] data;
 
     return 0;
+}
+
+
+BRT::HittableList RandomScene() 
+{
+    BRT::HittableList world;
+
+    auto ground_material = BRT::CreateShared<BRT::Matte>(glm::vec3(0.25, 0.5, 0.35));
+    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(0, -1000, 0), 1000, ground_material));
+
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto choose_mat = BRT::Utility::RandomDouble();
+            glm::vec3 center(a + 0.9 * BRT::Utility::RandomDouble(), 0.2, b + 0.9 * BRT::Utility::RandomDouble());
+
+            if ((center - glm::vec3(4, 0.2, 0)).length() > 0.9) {
+                BRT::Shared<BRT::Material> sphere_material;
+
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo = BRT::Utility::RandomVector(0.f,1.f) * BRT::Utility::RandomVector(0.f, 1.f);
+                    sphere_material = BRT::CreateShared<BRT::Matte>(albedo);
+                    world.AddObject(BRT::CreateShared<BRT::Sphere>(center, 0.2, sphere_material));
+                }
+                else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo = BRT::Utility::RandomVector(0.f, 1.f);
+                    auto fuzz = BRT::Utility::RandomDouble(0, 0.8);
+                    sphere_material = BRT::CreateShared<BRT::Metal>(albedo, fuzz);
+                    world.AddObject(BRT::CreateShared<BRT::Sphere>(center, 0.2, sphere_material));
+                }
+                else {
+                    // glass
+                    sphere_material = BRT::CreateShared<BRT::Dialectric>(1.5);
+                    world.AddObject(BRT::CreateShared<BRT::Sphere>(center, 0.2, sphere_material));
+                }
+            }
+        }
+    }
+
+    auto material1 = BRT::CreateShared<BRT::Dialectric>(1.5);
+    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(0, 1, 0), 1.0, material1));
+
+    auto material2 = BRT::CreateShared<BRT::Matte>(glm::vec3(0.4, 0.2, 0.1));
+    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(-4, 1, 0), 1.0, material2));
+
+    auto material3 = BRT::CreateShared<BRT::Metal>(glm::vec3(0.7, 0.6, 0.5), 0.0);
+    world.AddObject(BRT::CreateShared<BRT::Sphere>(glm::vec3(4, 1, 0), 1.0, material3));
+
+    return world;
 }

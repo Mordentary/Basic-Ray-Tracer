@@ -1,4 +1,5 @@
 #include "Sphere.h"
+#include <glm/gtx/norm.hpp>
 
 
 namespace BRT
@@ -8,7 +9,7 @@ namespace BRT
         glm::vec3 oc = ray.GetOrigin() - m_Center;
         double a = std::pow(glm::length(ray.GetDirection()), 2);
         double half_b = glm::dot(oc, ray.GetDirection());
-        double c = std::pow(glm::length(oc), 2) - m_Radius * m_Radius;
+        double c = glm::length2(oc) - m_Radius * m_Radius;
         double discriminant = half_b * half_b - a * c;
 
       
@@ -27,6 +28,7 @@ namespace BRT
         info.Point = ray.PointAtDistance(root);
         info.Normal = (info.Point - m_Center) / (float)m_Radius;
         info.SetFaceNormal(ray, info.Normal);
+        info.Material = m_Material;
 
         return true;
     }

@@ -1279,6 +1279,7 @@
     <ClInclude Include="src\Core\HittableList.h" />
     <ClInclude Include="src\Core\Utility.h" />
     <ClInclude Include="src\Core\Camera.h" />
+    <ClInclude Include="src\Core\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image\stb_image_write.cpp">
@@ -1289,5 +1290,7 @@
     <ClCompile Include="src\Core\Sphere.cpp" />
     <ClCompile Include="src\Core\HittableList.cpp" />
     <ClCompile Include="src\Core\Camera.cpp" />
+    <ClCompile Include="src\Core\Material.cpp" />
+    <ClCompile Include="src\Core\Utility.cpp" />
   </ItemGroup>
 </Project>
