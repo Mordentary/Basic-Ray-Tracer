@@ -1,6 +1,8 @@
 # Basic-Ray-Tracer
-Simple Ray Tracer with C++ without using any API.
-My implementation of https://raytracing.github.io/ series.
+Welcome to Basic-Ray-Tracer, a implementation of a ray tracer with C++. This project is based on the book "Ray Tracing in One Weekend" by Peter Shirley and aims to provide a basic introduction to the concept of ray tracing and how it can be used to create realistic images.
+
+
+The output of the ray tracer is saved in the JPG image format.
 
 Showcase:
 
