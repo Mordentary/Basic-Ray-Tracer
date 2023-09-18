@@ -5,8 +5,7 @@ workspace "BasicRayTracer"
 	configurations
 	{
 		"Debug",
-		"Release",
-		"Dist"
+		"Release"
 	}
 	flags
 	{
@@ -35,6 +34,7 @@ project "BasicRayTracer"
 	files
 	{
 		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/**.h",
@@ -67,10 +67,13 @@ project "BasicRayTracer"
 	filter "configurations:Release"
 		defines "BRT_REALESE"
 		runtime "Release"
-		optimize "on"
-
-	filter "configurations:Dist"
-		defines "BRT_DIST"
-		runtime "Release"
-		optimize "on"
+		symbols "Off"
+		optimize "Full"  
+		flags { "NoBufferSecurityCheck" }  
+		filter "toolset:gcc or clang"
+			buildoptions { "-O3", "-march=native" }  -- GCC/Clang specific flags
+		filter "toolset:msc*"  -- Visual Studio specific flags
+			buildoptions { "/O2", "/arch:AVX2" }  -- Example: Use AVX2 instructions
+	
+	filter {}  
 
