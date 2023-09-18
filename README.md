@@ -2,7 +2,7 @@
 Welcome to Basic-Ray-Tracer, a implementation of a ray tracer with C++. This project is based on the Ray Tracing book series by <a href="https://raytracing.github.io/">Peter Shirley</a> and aims to provide a basic introduction to the concept of ray tracing and how it can be used to create realistic images.
 
 
-The output of the ray tracer is saved in the JPG image format.
+The renderer has been modified to be multithreaded, and the output of the ray tracer is saved in the JPG image format
 
 Showcase:
 
