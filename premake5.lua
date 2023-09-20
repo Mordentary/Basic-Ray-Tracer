@@ -16,6 +16,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["glm"] = "BasicRayTracer/vendor/glm"
 IncludeDir["stb_image"] = "BasicRayTracer/vendor/stb_image"
+IncludeDir["SFML"] = "BasicRayTracer/vendor/SFML-2.6.0/include"
 
 
 
@@ -38,10 +39,22 @@ project "BasicRayTracer"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/**.h",
-		"%{prj.name}/vendor/stb_image/**.cpp"
-
+		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/SFML-2.6.00/include/**.hpp"
 	}
 	
+	libdirs
+    {
+		"%{prj.name}/vendor/SFML-2.6.0/lib"
+    }
+    
+    links
+    {
+		"sfml-graphics.lib", 
+		"sfml-window.lib",
+		"sfml-system.lib"
+    }
+
 	defines
 	{	
 		"_CRT_SECURE_NO_WARNINGS" 
@@ -51,7 +64,9 @@ project "BasicRayTracer"
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.SFML}"
+
 	}
 
 
@@ -70,10 +85,6 @@ project "BasicRayTracer"
 		symbols "Off"
 		optimize "Full"  
 		flags { "NoBufferSecurityCheck" }  
-		filter "toolset:gcc or clang"
-			buildoptions { "-O3", "-march=native" }  -- GCC/Clang specific flags
-		filter "toolset:msc*"  -- Visual Studio specific flags
-			buildoptions { "/O2", "/arch:AVX2" }  -- Example: Use AVX2 instructions
 	
 	filter {}  
 

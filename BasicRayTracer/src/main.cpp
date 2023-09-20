@@ -1,3 +1,4 @@
+#include <SFML/Graphics.hpp>
 #include<iostream>
 #include<thread>
 
@@ -17,8 +18,8 @@ namespace BRT
 	const float ASPECT_RATIO = 16.0f / 9.0f;
 	const int WIDTH = 1000;
 	const int HEIGHT = static_cast<int>(WIDTH / ASPECT_RATIO);
-	const int SAMPLES_PER_PIXEL = 10;
-	const int MAX_DEPTH = 200;
+	const int SAMPLES_PER_PIXEL = 30;
+	const int MAX_DEPTH = 10;
 
 
 	// Camera and Viewport
@@ -77,16 +78,18 @@ namespace BRT
 		data[index] = static_cast<char>(256 * glm::clamp(color.r, 0.0f, 0.999f));         // Red channel
 		data[index + 1] = static_cast<char>(256 * glm::clamp(color.g, 0.0f, 0.999f));    // Green channel
 		data[index + 2] = static_cast<char>(256 * glm::clamp(color.b, 0.0f, 0.999f));    // Blue channel
+		data[index + 3] = 255;
+
 	}
 
-
 	const int numThreads = std::thread::hardware_concurrency();
+	std::vector<std::atomic<bool>> threadStatus(numThreads);
 
-	void RenderImagePart(int start, int end, const BRT::Camera& camera, const BRT::HittableList& world, unsigned char* data) {
-		for (int i = start; i < end; i += 3)
+	void RenderImagePart(int threadIndex, int start, int end, const BRT::Camera& camera, const BRT::HittableList& world, unsigned char* data) {
+		for (int i = start; i < end; i += 4)
 		{
-			int x = (i % (BRT::WIDTH * 3) / 3);
-			int y = (i / (BRT::WIDTH * 3));
+			int x = (i % (BRT::WIDTH * 4) / 4);
+			int y = (i / (BRT::WIDTH * 4));
 
 			glm::vec3 pixelColor(0, 0, 0);
 			for (int s = 0; s < BRT::SAMPLES_PER_PIXEL; ++s) {
@@ -98,8 +101,11 @@ namespace BRT
 			}
 
 			BRT::WriteColor(data, i, pixelColor);
+
 		}
+		threadStatus[threadIndex].store(false, std::memory_order_relaxed);
 	}
+
 
 
 }
@@ -125,7 +131,7 @@ int main()
 
 
 
-	glm::vec3 position(13, 2, 3);
+	glm::vec3 position(23, 7, 1);
 	glm::vec3 target(0, 0, 0);
 	glm::vec3 worldY(0, 1, 0);
 	float aperture = 0.1f;
@@ -135,37 +141,75 @@ int main()
 	// Render
 	std::cout << "Resolution:" << BRT::WIDTH << " X " << BRT::HEIGHT << "\n";
 
-	unsigned char* data = new unsigned char[BRT::HEIGHT * BRT::WIDTH * 3];
-
+	//unsigned char* data = new unsigned char[BRT::HEIGHT * BRT::WIDTH * 4];
+	uint8_t* data = new uint8_t[BRT::HEIGHT * BRT::WIDTH * 4];
 	//std::cerr << "\rScanlines remaining: " << y << ' ' << std::flush;
    // Generate the gradient
+
+	sf::RenderWindow window(sf::VideoMode(BRT::WIDTH, BRT::HEIGHT), "Raytracer Output");
+	sf::Texture texture;
+	texture.create(BRT::WIDTH, BRT::HEIGHT);
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
 
 	BRT::Timer timer;
 	timer.Start();
 
-	int totalPixels = BRT::HEIGHT * BRT::WIDTH * 3;
+	int totalPixels = BRT::HEIGHT * BRT::WIDTH * 6;
 
 	// Calculate the number of pixels each thread will handle.
 	int pixelsPerThread = totalPixels / BRT::numThreads;
 
 	// Create a vector of threads.
 	std::vector<std::thread> threads;
-
 	for (int t = 0; t < BRT::numThreads; ++t) {
 		// Calculate the start and end indices for each thread.
 		int start = t * pixelsPerThread;
 		int end = (t == BRT::numThreads - 1) ? totalPixels : start + pixelsPerThread;
-
+	
+		BRT::threadStatus[t].store(true, std::memory_order_relaxed); // Initialize all flags to true
 		// Launch a thread to render a portion of the image.
-		threads.emplace_back(BRT::RenderImagePart, start, end, std::ref(camera), std::ref(world), data);
+		threads.emplace_back(BRT::RenderImagePart, t, start, end, std::ref(camera), std::ref(world), data);
 	}
 
-	// Wait for all threads to finish.
-	for (std::thread& thread : threads) {
+
+	sf::Image image;
+
+	// Check the status of each thread
+	while (true)
+	{
+		bool allThreadsCompleted = true;
+
+		for (int i = 0; i < BRT::numThreads; ++i) {
+			if (BRT::threadStatus[i].load(std::memory_order_relaxed)) {
+				allThreadsCompleted = false;
+				break;
+			}
+		}
+		if (allThreadsCompleted) {
+			break; // All threads have completed
+		}
+		image.create(BRT::WIDTH, BRT::HEIGHT, data);
+		image.flipVertically();
+
+		texture.update(image);
+
+		window.clear();
+
+		window.draw(sprite);
+
+		window.display();
+	}
+
+
+	//Wait for all threads to finish.
+	for (auto& thread : threads)
+	{
 		thread.join();
 	}
 
 	timer.Stop();
+
 
 
 	std::cerr << "\nRendering complete!\n";
@@ -174,13 +218,26 @@ int main()
 
 	stbi_flip_vertically_on_write(true);
 
-	int result = stbi_write_jpg("outputs/jpg_test_.jpg", BRT::WIDTH, BRT::HEIGHT, 3, data, 100);
+	int result = stbi_write_jpg("outputs/jpg_test_.jpg", BRT::WIDTH, BRT::HEIGHT, 4, data, 100);
 
 	if (!result) {
 		std::cout << "WRITE ERROR!!";
 	}
 
 	delete[] data;
+
+
+	while (window.isOpen()) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
+		}
+
+	}
+
+
 
 	return 0;
 }
