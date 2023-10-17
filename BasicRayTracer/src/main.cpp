@@ -75,17 +75,17 @@ namespace BRT
 
 		color = glm::pow(color, gamma);
 
-		data[index] = static_cast<char>(256 * glm::clamp(color.r, 0.0f, 0.999f));         // Red channel
-		data[index + 1] = static_cast<char>(256 * glm::clamp(color.g, 0.0f, 0.999f));    // Green channel
-		data[index + 2] = static_cast<char>(256 * glm::clamp(color.b, 0.0f, 0.999f));    // Blue channel
+		data[index] = static_cast<char>(255 * glm::clamp(color.r, 0.0f, 0.999f));         // Red channel
+		data[index + 1] = static_cast<char>(255 * glm::clamp(color.g, 0.0f, 0.999f));    // Green channel
+		data[index + 2] = static_cast<char>(255 * glm::clamp(color.b, 0.0f, 0.999f));    // Blue channel
 		data[index + 3] = 255;
 
 	}
 
-	const int numThreads = std::thread::hardware_concurrency();
+	const int numThreads = std::thread::hardware_concurrency() ;
 	std::vector<std::atomic<bool>> threadStatus(numThreads);
 
-	void RenderImagePart(int threadIndex, int start, int end, const BRT::Camera& camera, const BRT::HittableList& world, unsigned char* data) {
+	void RenderImagePart(int threadIndex, int start, int end, const BRT::Camera& camera, const BRT::HittableList& world, uint8_t* data) {
 		for (int i = start; i < end; i += 4)
 		{
 			int x = (i % (BRT::WIDTH * 4) / 4);
@@ -155,7 +155,7 @@ int main()
 	BRT::Timer timer;
 	timer.Start();
 
-	int totalPixels = BRT::HEIGHT * BRT::WIDTH * 6;
+	int totalPixels = BRT::HEIGHT * BRT::WIDTH * 4;
 
 	// Calculate the number of pixels each thread will handle.
 	int pixelsPerThread = totalPixels / BRT::numThreads;

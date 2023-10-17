@@ -83,8 +83,6 @@ project "BasicRayTracer"
 		defines "BRT_REALESE"
 		runtime "Release"
 		symbols "Off"
-		optimize "Full"  
-		flags { "NoBufferSecurityCheck" }  
 	
 	filter {}  
 
